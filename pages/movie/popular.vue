@@ -1,14 +1,6 @@
 <template>
   <v-container>
     <h3 class="heading">Popular Movies</h3>
-    <h3>{{ selectedGenre }}</h3>
-
-    <v-select
-      v-model="selectedGenre"
-      :items="movieGenres"
-      dense
-      class="mb-16"
-    ></v-select>
 
     <v-row>
       <v-col
@@ -34,7 +26,7 @@
 
 <script>
 import { mapState } from "vuex";
-import Thumbnail from "../../components/Thumbnail.vue";
+import Thumbnail from "@/components/Thumbnail.vue";
 
 export default {
   components: { Thumbnail },
@@ -42,12 +34,11 @@ export default {
   data() {
     return {
       page: 1,
-      items: ["a", "b", "c", "d"],
       selectedGenre: null,
     };
   },
   computed: {
-    ...mapState(["popularMovies", "movieGenres"]),
+    ...mapState(["popularMovies"]),
   },
   watch: {
     page() {

@@ -1,6 +1,7 @@
 import { API_KEY, MOVIE_URL } from "../utils/constant";
 
 export const state = () => ({
+    movies: {},
     popularMovies: {},
     topRatedMovies: {},
     popularTVs: {},
@@ -14,6 +15,7 @@ export const state = () => ({
 export const actions = {
     async nuxtServerInit({ commit, dispatch }, { req }) {
         try {
+            await dispatch('fetchMovies');
             await dispatch("fetchPopularMovies");
             await dispatch("fetchTopRatedMovies");
             await dispatch("fetchPopularTVs");
@@ -22,11 +24,31 @@ export const actions = {
             console.log(error);
         }
     },
+    async fetchMovies({ commit }, page = 1) {
+        let movies = await this.$axios.$get(
+            `${MOVIE_URL}/discover/movie?api_key=${API_KEY}&language=en-US&page=${page}`
+        );
+        commit("FETCH_MOVIES", movies);
+    },
+    async fetchMoviesWithQuery({ commit }, query) {
+        let queryString = "";
+
+        for (let key in query) {
+            queryString += `&${key}=${query[key]}`;
+        }
+
+        let movies = await this.$axios.$get(
+            `${MOVIE_URL}/discover/movie?api_key=${API_KEY}&language=en-US${queryString}`
+        );
+
+        console.log(movies);
+        commit("FETCH_MOVIES", movies);
+    },
     async fetchPopularMovies({ commit }, page = 1) {
         let popular = await this.$axios.$get(
             `${MOVIE_URL}/movie/popular?api_key=${API_KEY}&language=en-US&page=${page}`
         );
-        commit("FETCH_MOVIES", popular);
+        commit("FETCH_POPULAR_MOVIES", popular);
     },
     async fetchTopRatedMovies({ commit }, page = 1) {
         let topRated = await this.$axios.$get(
@@ -106,6 +128,9 @@ export const actions = {
 
 export const mutations = {
     FETCH_MOVIES(state, payload) {
+        state.movies = payload;
+    },
+    FETCH_POPULAR_MOVIES(state, payload) {
         state.popularMovies = payload;
     },
     FETCH_TOP_RATED_MOVIES(state, payload) {
@@ -129,7 +154,6 @@ export const mutations = {
             return ({ text: name, value: id })
         });
 
-        console.log(items);
         state.movieGenres = items;
     }
 };

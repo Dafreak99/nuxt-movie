@@ -6,9 +6,9 @@
           <nuxt-link to="/"><img src="/clapperboard.png" alt="" /></nuxt-link>
         </div>
         <ul class="nav-menu">
-          <li><nuxt-link to="/movie/popular">Movies</nuxt-link></li>
+          <li><nuxt-link to="/movie/default">Movies</nuxt-link></li>
           <li><nuxt-link to="/a">Genre</nuxt-link></li>
-          <li><nuxt-link to="/tv/popular">TV Shows</nuxt-link></li>
+          <li><nuxt-link to="/tv/default">TV Shows</nuxt-link></li>
           <li><nuxt-link to="/a">Top IMDB</nuxt-link></li>
         </ul>
         <div class="nav-search">
