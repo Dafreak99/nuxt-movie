@@ -5,7 +5,9 @@ export const state = () => ({
     topRatedMovies: {},
     popularTVs: {},
     searchMovies: {},
-    detail: {},
+    detail: {
+        loading: false,
+    },
 });
 
 export const actions = {
@@ -37,6 +39,8 @@ export const actions = {
         commit("FETCH_TV", data);
     },
     async fetchDetail({ commit }, { id, type }) {
+        commit('LOADING_DETAIL');
+
         try {
             const data = await this.$axios.$get(
                 `${MOVIE_URL}/${type}/${id}?api_key=${API_KEY}&language=en-US`
@@ -103,7 +107,10 @@ export const mutations = {
         state.popularTVs = payload;
     },
     FETCH_DETAIL(state, payload) {
-        state.detail = payload;
+        state.detail = { ...payload, loading: false };
+    },
+    LOADING_DETAIL(state, payload) {
+        state.detail.loading = true;
     },
     SEARCH(state, payload) {
         state.searchMovies = payload;

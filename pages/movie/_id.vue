@@ -3,7 +3,7 @@
     class="info"
     :style="`background-image: linear-gradient(to bottom, rgb(12 12 12 / 89%), rgb(0 0 0 / 73%)), url(${backdropUrl}/${detail.backdrop_path});height: 100%; background-size: cover`"
   >
-    <v-container class="py-16">
+    <v-container class="py-16" v-if="!detail.loading">
       <!-- MOVIE INFO -->
       <v-row>
         <v-col>
@@ -87,6 +87,10 @@
           </swiper>
         </v-row>
       </section>
+    </v-container>
+
+    <v-container>
+      <h1>Loading....</h1>
     </v-container>
   </div>
 </template>
