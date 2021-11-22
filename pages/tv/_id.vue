@@ -1,6 +1,17 @@
 <template>
   <div
     class="info"
+    v-if="$fetchState.pending"
+    :style="`background: #000 !important`"
+  >
+    <v-container class="py-16">
+      <spinner />
+    </v-container>
+  </div>
+
+  <div
+    class="info"
+    v-else
     :style="`background-image: linear-gradient(to bottom, rgb(12 12 12 / 89%), rgb(0 0 0 / 73%)), url(${backdropUrl}/${detail.backdrop_path});height: 100%; background-size: cover`"
   >
     <v-container class="py-16">
@@ -67,6 +78,26 @@
           </v-col>
         </v-row>
       </section>
+
+      <!-- GALLERY -->
+      <section class="section-padding">
+        <h3 class="section-heading">Gallery</h3>
+        <client-only>
+          <cool-light-box :items="images" :index="index" @close="index = null">
+          </cool-light-box>
+        </client-only>
+
+        <div class="images-wrapper">
+          <img
+            class="image"
+            v-for="(image, imageIndex) in images"
+            :key="imageIndex"
+            @click="index = imageIndex"
+            :src="image"
+            alt=""
+          />
+        </div>
+      </section>
     </v-container>
   </div>
 </template>
@@ -81,15 +112,22 @@ import {
 
 export default {
   name: "Info",
-  computed: {
-    ...mapState(["detail"]),
-  },
+
   data() {
     return {
       posterUrl: POSTER_URL,
       backdropUrl: BACKDROP_URL,
       posterUrl: LARGE_POSTER_URL,
+      index: null,
     };
+  },
+  computed: {
+    ...mapState(["detail"]),
+    images() {
+      return this.detail.images
+        .slice(0, 8)
+        .map((image) => `${this.posterUrl}/${image.file_path}`);
+    },
   },
   async fetch() {
     // type is either 'movie' or 'tv'
@@ -114,6 +152,20 @@ export default {
   font-size: 25px;
 }
 
+.images-wrapper {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-gap: 10px;
+  .image {
+    grid-column: span 3;
+    height: 300px;
+    width: 100%;
+    object-fit: cover;
+    cursor: pointer;
+    border-radius: 8px;
+  }
+}
+
 .info {
   height: 100vh;
   &-heading {
@@ -122,8 +174,6 @@ export default {
   }
   &-image {
     height: 500px;
-  }
-  &-overview {
   }
 
   &-genre {

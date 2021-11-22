@@ -8,6 +8,7 @@ export const state = () => ({
     detail: {
         loading: false,
     },
+    movieGenres: []
 });
 
 export const actions = {
@@ -16,6 +17,7 @@ export const actions = {
             await dispatch("fetchPopularMovies");
             await dispatch("fetchTopRatedMovies");
             await dispatch("fetchPopularTVs");
+            await dispatch('fetchMovieGenres');
         } catch (error) {
             console.log(error);
         }
@@ -62,6 +64,12 @@ export const actions = {
         } catch (error) {
             console.log(error);
         }
+    },
+    async fetchMovieGenres({ commit }) {
+        let { genres } = await this.$axios.$get(
+            `${MOVIE_URL}/genre/movie/list?api_key=${API_KEY}&language=en-US&page`
+        );
+        commit("FETCH_MOVIE_GENRES", genres);
     },
     async search({ commit }, keyword) {
         try {
@@ -115,4 +123,13 @@ export const mutations = {
     SEARCH(state, payload) {
         state.searchMovies = payload;
     },
+    FETCH_MOVIE_GENRES(state, payload) {
+        // tranforms the genres's format for <v-select>
+        let items = payload.map(({ name, id }) => {
+            return ({ text: name, value: id })
+        });
+
+        console.log(items);
+        state.movieGenres = items;
+    }
 };

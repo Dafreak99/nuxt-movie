@@ -26,7 +26,8 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
-    { src: '~/plugins/global' },
+    { src: '~/plugins/swiper' },
+    { src: '~/plugins/lightbox', mode: 'client' },
     { src: '~/plugins/youtube', mode: 'client' },
   ],
 

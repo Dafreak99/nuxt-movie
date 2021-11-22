@@ -1,9 +1,20 @@
 <template>
   <div
     class="info"
+    v-if="$fetchState.pending"
+    :style="`background: #000 !important`"
+  >
+    <v-container class="py-16">
+      <spinner />
+    </v-container>
+  </div>
+
+  <div
+    v-else
+    class="info"
     :style="`background-image: linear-gradient(to bottom, rgb(12 12 12 / 89%), rgb(0 0 0 / 73%)), url(${backdropUrl}/${detail.backdrop_path});height: 100%; background-size: cover`"
   >
-    <v-container class="py-16" v-if="!detail.loading">
+    <v-container class="py-16">
       <!-- MOVIE INFO -->
       <v-row>
         <v-col>
@@ -59,44 +70,30 @@
       <!-- GALLERY -->
       <section class="section-padding">
         <h3 class="section-heading">Gallery</h3>
-        <v-row>
-          <v-col
-            lg="4"
-            v-for="cast in detail.cast.slice(0, 1)"
-            :key="cast.id"
-            class="cast"
-          >
-            <client-only>
-              <template>
-                <LazyYoutube
-                  src="https://www.youtube.com/watch?v=TcMBFSGVi1c"
-                />
-              </template>
-            </client-only>
-          </v-col>
-        </v-row>
-        <v-row>
-          <swiper class="swiper" :options="swiperOption">
-            <swiper-slide v-for="image in detail.images" :key="image.file_path">
-              <img :src="`${posterUrl}/${image.file_path}`" alt="" />
-            </swiper-slide>
+        <client-only>
+          <cool-light-box :items="images" :index="index" @close="index = null">
+          </cool-light-box>
+        </client-only>
 
-            <div class="swiper-pagination" slot="pagination"></div>
-            <div class="swiper-button-prev" slot="button-prev"></div>
-            <div class="swiper-button-next" slot="button-next"></div>
-          </swiper>
-        </v-row>
+        <div class="images-wrapper">
+          <img
+            class="image"
+            v-for="(image, imageIndex) in images"
+            :key="imageIndex"
+            @click="index = imageIndex"
+            :src="image"
+            alt=""
+          />
+        </div>
       </section>
-    </v-container>
-
-    <v-container>
-      <h1>Loading....</h1>
     </v-container>
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
+import Spinner from "../../components/Spinner.vue";
+
 import {
   BACKDROP_URL,
   LARGE_POSTER_URL,
@@ -105,29 +102,23 @@ import {
 
 export default {
   name: "Info",
-  computed: {
-    ...mapState(["detail"]),
-  },
-  components: {},
+
+  components: { Spinner },
   data() {
     return {
       posterUrl: POSTER_URL,
       backdropUrl: BACKDROP_URL,
       posterUrl: LARGE_POSTER_URL,
-      swiperOption: {
-        slidesPerView: 4,
-        spaceBetween: 30,
-        slidesPerGroup: 3,
-        pagination: {
-          el: ".swiper-pagination",
-          clickable: true,
-        },
-        navigation: {
-          nextEl: ".swiper-button-next",
-          prevEl: ".swiper-button-prev",
-        },
-      },
+      index: null,
     };
+  },
+  computed: {
+    ...mapState(["detail"]),
+    images() {
+      return this.detail.images
+        .slice(0, 8)
+        .map((image) => `${this.posterUrl}/${image.file_path}`);
+    },
   },
   async fetch() {
     // type is either 'movie' or 'tv'
@@ -148,6 +139,21 @@ export default {
   margin-bottom: 40px;
   font-size: 25px;
 }
+
+.images-wrapper {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-gap: 10px;
+  .image {
+    grid-column: span 3;
+    height: 300px;
+    width: 100%;
+    object-fit: cover;
+    cursor: pointer;
+    border-radius: 8px;
+  }
+}
+
 .info {
   height: 100vh;
   &-heading {
@@ -156,8 +162,6 @@ export default {
   }
   &-image {
     height: 500px;
-  }
-  &-overview {
   }
 
   &-genre {
