@@ -1,0 +1,30 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap");
+.v-application--wrap {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #000;
+  color: #fff;
+}
+.v-application {
+  line-height: 1.6 !important;
+  font-family: "Nunito", sans-serif !important;
+}
+
+.swiper-pagination-bullet {
+  background: #ddd !important;
+}
+
+a {
+  text-decoration: none;
+}
+
+.list .swiper-slide {
+  height: auto !important;
+  width: min-content !important;
+}
+
+@media (min-width: 1904px) {
+  .container {
+    max-width: 1200px !important;
+  }
+}
