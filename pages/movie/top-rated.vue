@@ -42,7 +42,7 @@ export default {
     page() {
       // update the corresponding query page
       this.$router.replace({
-        name: "movie-top-rated",
+        name: this.$route.name,
         query: { page: this.page },
       });
 

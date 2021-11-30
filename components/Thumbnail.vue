@@ -1,7 +1,7 @@
 <template>
   <nuxt-link
     :to="{
-      name: movie.title ? 'movie-id' : 'tv-id',
+      name: movie.title ? 'movie-detail' : 'tv-detail',
       params: {
         id: `${textToSlug(movie.title ? movie.title : movie.name)}-${movie.id}`,
       },

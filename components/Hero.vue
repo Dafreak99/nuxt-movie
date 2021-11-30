@@ -12,7 +12,7 @@
                 <p class="hero-overview">Overview: {{ movie.overview }}</p>
                 <nuxt-link
                   :to="{
-                    name: 'movie-id',
+                    name: 'movie-detail',
                     params: {
                       id: `${textToSlug(movie.title)}-${movie.id}`,
                     },

@@ -18,9 +18,9 @@
 </template>
 
 <script>
-import { slugToText } from "../../utils/helpers";
+import { slugToText } from "@/utils/helpers";
 import { mapState } from "vuex";
-import Thumbnail from "../../components/Thumbnail.vue";
+import Thumbnail from "@/components/Thumbnail.vue";
 
 export default {
   components: { Thumbnail },
@@ -30,7 +30,6 @@ export default {
   },
   async fetch() {
     if (!this.searchResults) {
-      console.log("called API");
       await this.$store.dispatch(
         "search",
         slugToText(this.$route.params.keyword.trim())

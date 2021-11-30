@@ -2,6 +2,7 @@ import { API_KEY, MOVIE_URL } from "../utils/constant";
 
 export const state = () => ({
     movies: {},
+    tvs: {},
     popularMovies: {},
     topRatedMovies: {},
     popularTVs: {},
@@ -16,6 +17,7 @@ export const actions = {
     async nuxtServerInit({ commit, dispatch }, { req }) {
         try {
             await dispatch('fetchMovies');
+            await dispatch('fetchTvs');
             await dispatch("fetchPopularMovies");
             await dispatch("fetchTopRatedMovies");
             await dispatch("fetchPopularTVs");
@@ -30,6 +32,12 @@ export const actions = {
         );
         commit("FETCH_MOVIES", movies);
     },
+    async fetchTvs({ commit }, page = 1) {
+        let tvs = await this.$axios.$get(
+            `${MOVIE_URL}/discover/tv?api_key=${API_KEY}&language=en-US&page=${page}`
+        );
+        commit("FETCH_TVS", tvs);
+    },
     async fetchMoviesWithQuery({ commit }, query) {
         let queryString = "";
 
@@ -41,8 +49,20 @@ export const actions = {
             `${MOVIE_URL}/discover/movie?api_key=${API_KEY}&language=en-US${queryString}`
         );
 
-        console.log(movies);
         commit("FETCH_MOVIES", movies);
+    },
+    async fetchTvsWithQuery({ commit }, query) {
+        let queryString = "";
+
+        for (let key in query) {
+            queryString += `&${key}=${query[key]}`;
+        }
+
+        let tvs = await this.$axios.$get(
+            `${MOVIE_URL}/discover/tv?api_key=${API_KEY}&language=en-US${queryString}`
+        );
+
+        commit("FETCH_TVS", tvs);
     },
     async fetchPopularMovies({ commit }, page = 1) {
         let popular = await this.$axios.$get(
@@ -135,6 +155,9 @@ export const mutations = {
     },
     FETCH_TOP_RATED_MOVIES(state, payload) {
         state.topRatedMovies = payload;
+    },
+    FETCH_TVS(state, payload) {
+        state.tvs = payload;
     },
     FETCH_TV(state, payload) {
         state.popularTVs = payload;

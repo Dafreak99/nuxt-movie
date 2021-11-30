@@ -10,8 +10,8 @@
   </div>
 
   <div
-    v-else
     class="info"
+    v-else
     :style="`background-image: linear-gradient(to bottom, rgb(12 12 12 / 89%), rgb(0 0 0 / 73%)), url(${backdropUrl}/${detail.backdrop_path});height: 100%; background-size: cover`"
   >
     <v-container class="py-16">
@@ -25,13 +25,40 @@
           />
         </v-col>
         <v-col>
-          <h3 class="info-heading">{{ detail.original_title }}</h3>
-          <p class="info-overview">{{ detail.overview }}</p>
-          <p class="info-status">Status: {{ detail.status }}</p>
-          <p class="info-date">Released Date: {{ detail.release_date }}</p>
-          <p class="info-duration">Duration: {{ detail.runtime }} minutes</p>
+          <!-- MOVIE -->
+          <template v-if="type === 'movie'">
+            <h3 class="info-heading">{{ detail.original_title }}</h3>
+            <p class="info-overview">{{ detail.overview }}</p>
+            <p class="info-status">Status: {{ detail.status }}</p>
+            <p class="info-date">Released Date: {{ detail.release_date }}</p>
+            <p class="info-duration">Duration: {{ detail.runtime }} minutes</p>
+          </template>
+
+          <!-- TV -->
+          <template v-else>
+            <h3 class="info-heading">
+              {{ detail.title ? detail.title : detail.name }}
+            </h3>
+            <p class="info-overview">{{ detail.overview }}</p>
+            <p class="info-status">Status: {{ detail.status }}</p>
+            <p class="info-date">
+              Air Date: {{ detail.first_air_date }} - {{ detail.last_air_date }}
+            </p>
+            <p class="info-duration">
+              Number of Seasons: {{ detail.number_of_seasons }}
+              {{ detail.number_of_seasons > 1 ? "seasons" : "season" }}
+            </p>
+            <p class="info-duration">
+              Number of Episodes: {{ detail.number_of_episodes }} ({{
+                detail.episode_run_time[0]
+              }}
+              minutes/ep)
+            </p>
+          </template>
+
+          <!-- GENRE TAGS -->
           <nuxt-link
-            to="/id"
+            :to="`/${type}?with_genres=${genre.id}`"
             v-for="genre in detail.genres"
             :key="genre.id"
             class="info-genre"
@@ -39,14 +66,14 @@
           >
         </v-col>
       </v-row>
+
       <!-- CASTS -->
-      <section class="section mt-16 mb-8">
+      <section class="section-padding">
         <h3 class="section-heading">Casts</h3>
-        <v-row v-if="detail.cast.length > 0">
+        <v-row>
           <v-col
             lg="2"
-            md="3"
-            v-for="cast in detail.cast.slice(0, 12)"
+            v-for="cast in detail.cast.slice(0, 8)"
             :key="cast.id"
             class="cast"
           >
@@ -65,8 +92,8 @@
             </nuxt-link>
           </v-col>
         </v-row>
-        <v-row v-else>Loading....</v-row>
       </section>
+
       <!-- GALLERY -->
       <section class="section-padding">
         <h3 class="section-heading">Gallery</h3>
@@ -92,18 +119,11 @@
 
 <script>
 import { mapState } from "vuex";
-import Spinner from "../../components/Spinner.vue";
-
-import {
-  BACKDROP_URL,
-  LARGE_POSTER_URL,
-  POSTER_URL,
-} from "../../utils/constant";
+import { BACKDROP_URL, LARGE_POSTER_URL, POSTER_URL } from "../utils/constant";
 
 export default {
-  name: "Info",
+  name: "Detail",
 
-  components: { Spinner },
   data() {
     return {
       posterUrl: POSTER_URL,
@@ -111,6 +131,11 @@ export default {
       posterUrl: LARGE_POSTER_URL,
       index: null,
     };
+  },
+  props: {
+    type: {
+      type: String,
+    },
   },
   computed: {
     ...mapState(["detail"]),
@@ -129,12 +154,18 @@ export default {
     let movieId = arr[arr.length - 1];
 
     // returns a Promise to make Nuxt wait in SSR
-    await this.$store.dispatch("fetchDetail", { id: movieId, type: "movie" });
+    await this.$store.dispatch("fetchDetail", {
+      id: movieId,
+      type: this.type,
+    });
   },
 };
 </script>
 
 <style lang="scss" scoped>
+.section-padding {
+  padding: 100px 0;
+}
 .section-heading {
   margin-bottom: 40px;
   font-size: 25px;

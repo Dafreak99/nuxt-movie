@@ -28,8 +28,8 @@
 
 <script>
 import { mapState } from "vuex";
-import Hero from "../components/Hero.vue";
-import HorizontalList from "../components/HorizontalList.vue";
+import Hero from "@/components/Hero.vue";
+import HorizontalList from "@/components/HorizontalList.vue";
 
 export default {
   components: { HorizontalList, Hero },

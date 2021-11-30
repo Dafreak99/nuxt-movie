@@ -23,7 +23,6 @@
 
 <script>
 import vClickOutside from "v-click-outside";
-import _debounce from "lodash/debounce";
 
 import { textToSlug } from "../utils/helpers";
 import { mapState } from "vuex";
@@ -45,6 +44,12 @@ export default {
   computed: {
     ...mapState(["searchMovies"]),
   },
+  watch: {
+    $route(to, from) {
+      this.keyword = "";
+      this.showSearch = false;
+    },
+  },
   methods: {
     debounceSearch(event) {
       clearTimeout(this.debounce);
@@ -64,7 +69,7 @@ export default {
 
       if (navigate) {
         this.$router.push({
-          name: "search-keyword",
+          name: "search",
           params: {
             keyword: textToSlug(this.keyword.trim()),
             key: this.keyword.trim(),
@@ -82,12 +87,6 @@ export default {
       )}-${movie.id}}`;
     },
     onClickOutside(event) {
-      this.showSearch = false;
-    },
-  },
-  watch: {
-    $route(to, from) {
-      this.keyword = "";
       this.showSearch = false;
     },
   },
